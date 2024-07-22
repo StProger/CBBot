@@ -1,5 +1,7 @@
 import aiohttp
 
+import xml.etree.ElementTree as ET
+
 from bot.settings import settings
 
 
@@ -18,9 +20,22 @@ class CentralBankClient(HttpClient):
 
             if response.status == 200:
 
-                cb_rates = await response.content
+                cb_rates = await response.text()
                 print(cb_rates)
                 return cb_rates
             else:
 
                 return None
+
+    @staticmethod
+    async def parse_rates(cb_rates):
+
+        root = ET.fromstring(cb_rates)
+
+        for rate in root:
+            rate: ET.Element
+            id_rate = rate.attrib
+            value_rate = rate.find('Value').text
+            name_rate = rate.find("Name").text
+
+            
