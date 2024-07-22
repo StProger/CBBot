@@ -32,10 +32,20 @@ class CentralBankClient(HttpClient):
 
         root = ET.fromstring(cb_rates)
 
+        rates_list = []
+
         for rate in root:
             rate: ET.Element
             id_rate = rate.attrib
             value_rate = rate.find('Value').text
             name_rate = rate.find("Name").text
 
-            
+            rates_list.append(
+                {
+                    "id": id_rate,
+                    "value": value_rate,
+                    "name": name_rate
+                }
+            )
+
+        return rates_list
