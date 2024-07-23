@@ -5,6 +5,8 @@ from yarl import URL
 
 import os
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 load_dotenv()
 
 
@@ -41,3 +43,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+BOT_SCHEDULER = AsyncIOScheduler(timezone=settings.BOT_TIMEZONE)

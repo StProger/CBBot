@@ -1,12 +1,11 @@
 import sys
-import os
 
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram import Dispatcher, Bot
 
 from bot.service.tasks.update_rates import update_rates_
-from bot.settings import settings # , BOT_SCHEDULER
+from bot.settings import settings, BOT_SCHEDULER
 from bot.routers import register_all_routers
 from bot import logging
 
@@ -25,9 +24,13 @@ async def main():
 
 
     await logging.setup()
+
     await update_rates_()
 
-    # BOT_SCHEDULER.start()
+    # Ставим задачу на ежедневное обновление валют
+    BOT_SCHEDULER.add_job(update_rates_, "cron", hour=0)
+
+    BOT_SCHEDULER.start()
 
     try:
 
@@ -42,5 +45,3 @@ async def main():
 if __name__ == '__main__':
 
     asyncio.run(main())
-    # asyncio.get_event_loop().create_task(main())
-
