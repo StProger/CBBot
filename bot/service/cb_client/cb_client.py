@@ -5,19 +5,19 @@ import xml.etree.ElementTree as ET
 from bot.settings import settings
 
 
-class HttpClient:
+# class HttpClient:
+#
+#     def __init__(self):
+#
+#         self._session = ClientSession()
 
-    def __init__(self):
 
-        self._session = aiohttp.ClientSession()
-
-
-class CentralBankClient(HttpClient):
+class CentralBankClient:
 
     async def get_rates(self):
 
-        async with self._session.get(url=settings.CB_URL) as response:
-
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(settings.CB_URL)
             if response.status == 200:
 
                 cb_rates = await response.text()
@@ -27,8 +27,7 @@ class CentralBankClient(HttpClient):
 
                 return None
 
-    @staticmethod
-    async def parse_rates(cb_rates):
+    async def parse_rates(self, cb_rates):
 
         root = ET.fromstring(cb_rates)
 
@@ -36,13 +35,13 @@ class CentralBankClient(HttpClient):
 
         for rate in root:
             rate: ET.Element
-            id_rate = rate.attrib
-            value_rate = rate.find('Value').text
+            char_code = rate.find("CharCode").text
+            value_rate = rate.find('VunitRate').text
             name_rate = rate.find("Name").text
 
             rates_list.append(
                 {
-                    "id": id_rate,
+                    "char_code": char_code,
                     "value": value_rate,
                     "name": name_rate
                 }
