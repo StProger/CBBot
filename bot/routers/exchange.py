@@ -10,7 +10,10 @@ router = Router()
 async def exchange_handler(message: types.Message, command: CommandObject):
 
     print(command.args)
-    args = command.args.split()
+    if command.args is None:
+        args = None
+    else:
+        args = command.args.split()
     if args is None:
 
         await message.answer("Не переданы аргументы")
